@@ -16,12 +16,14 @@
 	</div>
 	<p><a href='https://www.maptiler.com/copyright/' target='_blank' rel='noopener'>&copy; MapTiler</a> <a href='https://www.openstreetmap.org/copyright' target='_blank' rel='noopener'>&copy; OpenStreetMap contributors</a></p>
 	<script>
-		const key = 'mdpG6Li9IbVbxQvl9AtC';
+		var lon=-1.6; // default location is local to home
+		var lat=53.04;
+		const key = 'mdpG6Li9IbVbxQvl9AtC'; // default API key
 		const attribution = new ol.control.Attribution({
         	collapsible: false,
     	});
 		const source = new ol.source.TileJSON({
-        	url: `https://api.maptiler.com/tiles/uk-osgb1919/tiles.json?key=${key}`, // source URL
+        	url: `https://api.maptiler.com/tiles/uk-osgb1888/tiles.json?key=${key}`, // source URL
         	tileSize: 512,
         	crossOrigin: 'anonymous'
     	});
@@ -35,10 +37,20 @@
         	target: 'map',
     		view: new ol.View({
         		constrainResolution: true,
-        		center: ol.proj.fromLonLat([0, 0]), // starting position [lng, lat]
-        		zoom: 2 // starting zoom
+        		center: ol.proj.fromLonLat([lon, lat]), // starting position [lng, lat]
+        		zoom: 12 // starting zoom
         	})
     	});
+    	function setCoords(pos) {
+    		lat=pos.coords.latitude;
+    		lon=pos.coords.longitude;
+    		console.log('position is: '+lon+','+lat);
+    		map.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+    	};
+    	function err() {
+    		console.log('no geolocation');
+    	};
+    	navigator.geolocation.getCurrentPosition(setCoords,err);
 	</script>
 </body>
 </html>
